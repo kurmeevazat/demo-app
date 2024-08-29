@@ -1,0 +1,14 @@
+services:
+  demo-app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8081:8081"
+    container_name: my-demo-app-container
+    networks:
+      - demo-app-network
+
+networks:
+  demo-app-network:
+    driver: bridge
