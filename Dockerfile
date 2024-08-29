@@ -18,8 +18,5 @@ WORKDIR /opt/demo-app
 # Копируем скомпилированный JAR файл из предыдущего этапа
 COPY --from=build /opt/demo-app/target/*.jar ./demo-app.jar
 
-# Открываем порт для приложения
-EXPOSE 8081
-
 # Устанавливаем команду по умолчанию для запуска приложения
 CMD ["java", "-jar", "demo-app.jar"]
