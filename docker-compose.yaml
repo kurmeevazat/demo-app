@@ -16,6 +16,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
       - ./certs:/etc/nginx/certs
+      - ./src/main/resources/static/style.css:/opt/style.css
     networks:
       - demo-app-network
     depends_on:
