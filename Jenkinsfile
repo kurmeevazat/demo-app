@@ -34,9 +34,15 @@ pipeline {
         stage('Deploy with Docker Compose') {
             steps {
                 script {
-                    // Остановка предыдущей версии контейнеров (если они запущены)
-                    sh 'docker-compose down || true'
-                    // Запуск приложения с помощью Docker Compose
+                    // Остановка и удаление только старого контейнера demo-app, если он существует
+                    sh '''
+                    if [ "$(docker ps -q -f name=my-demo-app)" ]; then
+                        docker stop my-demo-app
+                        docker rm my-demo-app
+                    fi
+                    '''
+                    
+                    // Запуск контейнера demo-app с новой версией образа
                     sh 'docker-compose up -d demo-app'
                 }
             }
