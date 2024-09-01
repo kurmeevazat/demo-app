@@ -1,10 +1,8 @@
-pipeline {
-    agent any
+pipeline {  
+    agent { label 'local' }
 
-    environment {
-        //BRANCH = 'main' // Или другую ветку, которую нужно собрать
+    environment {   
         COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-        //GIT_URL = "${env.GIT_URL}" // Автоматически подставляется Jenkins
     }
 
     stages {
