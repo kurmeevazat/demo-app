@@ -4,13 +4,13 @@ pipeline {
     environment {
         //BRANCH = 'main' // Или другую ветку, которую нужно собрать
         COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-        GIT_URL = "${env.GIT_URL}" // Автоматически подставляется Jenkins
+        //GIT_URL = "${env.GIT_URL}" // Автоматически подставляется Jenkins
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: "${BRANCH}", url: "${REPO_URL}"
+                git branch: "${BRANCH}", url: "${env.GIT_URL}"
             }
         }
         stage('Build Java Application') {
