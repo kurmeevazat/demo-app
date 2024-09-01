@@ -2,7 +2,7 @@ pipeline {
     agent { label 'local' }
 
     parameters {
-        string(name: 'BRANCH', defaultValue: 'main', description: 'Git branch to build')
+        string(name: 'BRANCH', defaultValue: 'jenkins-test', description: 'Git branch to build')
         string(name: 'GIT_URL', defaultValue: 'https://github.com/kurmeevazat/demo-app.git', description: 'Git repository URL')
     }
 
