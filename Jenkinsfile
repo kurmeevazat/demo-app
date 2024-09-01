@@ -2,7 +2,7 @@ pipeline {
     agent { label 'local' }
 
     parameters {
-        string(name: 'BRANCH', defaultValue: 'jenkins-test', description: 'Git branch to build')
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Git branch to build')
         string(name: 'GIT_URL', defaultValue: 'https://github.com/kurmeevazat/demo-app.git', description: 'Git repository URL')
     }
 
@@ -27,23 +27,28 @@ pipeline {
             steps {
                 script {
                     // Сборка Docker образа Java приложения
-                    sh 'docker build -t my-demo-app:${COMMIT_HASH} .'
+                    sh "docker build -t my-demo-app:${COMMIT_HASH} ."
                 }
             }
         }
         stage('Deploy with Docker Compose') {
             steps {
                 script {
-                    // Остановка и удаление только старого контейнера demo-app, если он существует
-                    sh '''
-                    if [ "$(docker ps -q -f name=my-demo-app)" ]; then
-                        docker stop my-demo-app
-                        docker rm my-demo-app
-                    fi
-                    '''
+                    // Проверяем, существуют ли контейнеры
+                    def containersExist = sh(script: 'docker ps -a -q', returnStdout: true).trim()
                     
-                    // Запуск контейнера demo-app с новой версией образа
-                    sh 'docker-compose up -d demo-app'
+                    if (containersExist) {
+                        // Если контейнеры существуют, останавливаем и удаляем только контейнер demo-app
+                        sh '''
+                        if [ "$(docker ps -q -f name=my-demo-app)" ]; then
+                            docker stop my-demo-app
+                            docker rm my-demo-app
+                        fi
+                        '''
+                    }
+                    
+                    // Запуск всех контейнеров
+                    sh 'docker-compose up -d'
                 }
             }
         }
@@ -53,9 +58,5 @@ pipeline {
             // Сборка и отображение логов
             sh 'docker-compose logs'
         }
-        // Uncomment if cleanup is required
-        // cleanup {
-        //     sh 'docker system prune -f'
-        // }
     }
 }
