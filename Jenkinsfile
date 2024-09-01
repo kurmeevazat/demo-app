@@ -1,21 +1,33 @@
-pipeline {  
+pipeline {
     agent { label 'local' }
 
-    environment {   
+    parameters {
+        string(name: 'BRANCH', defaultValue: 'main', description: 'Git branch to build')
+        string(name: 'GIT_URL', defaultValue: 'https://github.com/kurmeevazat/demo-app.git', description: 'Git repository URL')
+    }
+
+    environment {
         COMMIT_HASH = sh(script: 'git rev-parse --short HEAD', returnStdout: true).trim()
     }
 
     stages {
         stage('Checkout') {
             steps {
-                git branch: "${env.BRANCH}", url: "${env.GIT_URL}"
+                script {
+                    // Проверка кода из указанной ветки
+                    checkout([$class: 'GitSCM',
+                        userRemoteConfigs: [[url: "${params.GIT_URL}"]],
+                        branches: [[name: "*/${params.BRANCH}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions: []])
+                }
             }
         }
         stage('Build Java Application') {
             steps {
                 script {
                     // Сборка Docker образа Java приложения
-                    sh 'docker build -t my-demo-app:latest .'
+                    sh 'docker build -t my-demo-app:${COMMIT_HASH} .'
                 }
             }
         }
@@ -35,9 +47,9 @@ pipeline {
             // Сборка и отображение логов
             sh 'docker-compose logs'
         }
-        //cleanup {
-            // Удаление неиспользуемых ресурсов, если необходимо
-        //    sh 'docker system prune -f'
-        //}
+        // Uncomment if cleanup is required
+        // cleanup {
+        //     sh 'docker system prune -f'
+        // }
     }
 }
