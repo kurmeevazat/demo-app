@@ -3,7 +3,7 @@ services:
     build: 
       context: .
       dockerfile: Dockerfile
-    image: my-demo-app:latest
+    image: my-demo-app:${COMMIT_HASH}
     ports:
       - "8081:8081"
     container_name: my-demo-app
