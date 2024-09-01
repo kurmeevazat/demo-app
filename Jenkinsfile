@@ -37,7 +37,7 @@ pipeline {
                     // Остановка предыдущей версии контейнеров (если они запущены)
                     sh 'docker-compose down || true'
                     // Запуск приложения с помощью Docker Compose
-                    sh 'docker-compose up -d'
+                    sh 'docker-compose up -d demo-app'
                 }
             }
         }
