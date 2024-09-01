@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: "${BRANCH}", url: "${env.GIT_URL}"
+                git branch: "${env.BRANCH}", url: "${env.GIT_URL}"
             }
         }
         stage('Build Java Application') {
